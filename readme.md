@@ -58,17 +58,14 @@
 在“系统类型”一行中，若显示“x64-based PC”，即为64位系统；若显示“X86-based PC”，则为32位系统。
 
 2. 访问 [golang.org](https://golang.org/dl/) 如果访问不了请访问 [golang中国](https://www.golangtc.com/download) 下载 msi 安装包
-
 32 位请选择名称中包含 windows-386 的 msi 安装包，64 位请选择名称中包含 windows-amd64 的 msi 安装包。
 下载好后运行安装，不要修改默认安装目录 C:\Go\，若安装到其他位置会导致不能执行自己所编写的 Go 代码。
 
 3. Go 语言需要配置 GOROOT 和 PATH 两个环境变量
-
 安装完成后默认会在环境变量 Path 后添加 Go 安装目录下的 bin 目录 `C:\Go\bin\`，并添加环境变量 GOROOT，值为 Go 安装根目录 `C:\Go\` 。
 无须再对其进行手工设置, 如果你第一步没有使用默认安装目录，那么需要对上述两个变量进行手工配置
 
 4. Go 工作目录 GOPATH 环境变量：可以随意指定， 用于存放Go语言Package的目录，这个目录不能在Go的安装目录中
-
     GOPATH：D:\go\
 
 5. 验证是否安装成功
