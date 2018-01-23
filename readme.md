@@ -54,20 +54,32 @@
 
 ### Windows 安装 ###
 
-Windows系统用户请按Win+R运行cmd，输入`systeminfo`后回车，稍等片刻，会出现一些系统信息。
+1. Windows系统用户请按Win+R运行cmd，输入`systeminfo`后回车，稍等片刻，会出现一些系统信息。
 在“系统类型”一行中，若显示“x64-based PC”，即为64位系统；若显示“X86-based PC”，则为32位系统。
 
-访问 https://golang.org/dl/，32 位请选择名称中包含 windows-386 的 msi 安装包，64 位请选择名称中包含 windows-amd64 的。
-下载好后运行，不要修改默认安装目录 C:\Go\，若安装到其他位置会导致不能执行自己所编写的 Go 代码。
+2. 访问 [golang.org](https://golang.org/dl/) 如果访问不了请访问 [golang中国](https://www.golangtc.com/download) 下载 msi 安装包
+
+32 位请选择名称中包含 windows-386 的 msi 安装包，64 位请选择名称中包含 windows-amd64 的 msi 安装包。
+下载好后运行安装，不要修改默认安装目录 C:\Go\，若安装到其他位置会导致不能执行自己所编写的 Go 代码。
+
+3. Go 语言需要配置 GOROOT 和 PATH 两个环境变量
+
 安装完成后默认会在环境变量 Path 后添加 Go 安装目录下的 bin 目录 `C:\Go\bin\`，并添加环境变量 GOROOT，值为 Go 安装根目录 `C:\Go\` 。
+无须再对其进行手工设置, 如果你第一步没有使用默认安装目录，那么需要对上述两个变量进行手工配置
 
-**验证是否安装成功**
+4. Go 工作目录 GOPATH 环境变量：可以随意指定， 用于存放Go语言Package的目录，这个目录不能在Go的安装目录中
 
+    GOPATH：D:\go\
+
+5. 验证是否安装成功
 在运行中输入 `cmd` 打开命令行工具，在提示符下输入 `go`，检查是否能看到 Usage 信息。输入 `cd %GOROOT%`，看是否能进入 Go 安装目录。若都成功，说明安装成功。
 
-不能的话请检查上述环境变量 Path 和 GOROOT 的值。若不存在请卸载后重新安装，存在请重启计算机后重试以上步骤。
+6. 在 GOPATH 的目录下创建 src， bin 两个目录
 
-## 修改配置文件
+## 下载项目源码到 GOPATH 目录中的 src 中
+下载 itysrv 源码到上面创建的src目录中(如果不是用 git clone 下载来的， 请手动解压缩， 并将文件夹的名字改为 itysrv)
+
+## 修改配置文件(srv.conf) 替换 ${appid}, ${appsecret}
 
 1. http 监听端口
 
@@ -95,16 +107,14 @@ Windows系统用户请按Win+R运行cmd，输入`systeminfo`后回车，稍等�
 
 5. log 参数配置
     - windows:  修改配置文件 srv.conf, 使用配置文件 itysrv-log-win.xml
-    - linux 修改配置文件 srv.conf, 使用配置文件 itysrv-log.xml
-    - macos 修改配置文件 srv.conf, 使用配置文件 itysrv-log.xml
+    - macos, linux 修改配置文件 srv.conf, 使用配置文件 itysrv-log.xml
 
 
 ## 运行服务(默认http:8081, websocket: 8082)
 
 1. cd itysrv
-2. go get -v
-3. go build
-4. ./itysrv
+2. go build
+3. ./itysrv
 
 ## 服务测试(默认连接websocket端口 8082, 创建1个客户端连接， 可以直接修改main.go 修改默认值)
 
@@ -142,6 +152,6 @@ step5. 获取某个设备的历史数据
 ```
 
 
-## 请注意 
+## 请注意
 
 在 client 中， 对于数据点的解析， 尤其针对 number 数据点类型的解析.
