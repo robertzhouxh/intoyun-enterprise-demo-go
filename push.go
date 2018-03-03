@@ -4,9 +4,9 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
-	"itysrv/libs/crypto/aes"
-	"itysrv/libs/define"
-	"itysrv/libs/proto"
+	"intoyun-enterprise-demo-go/libs/crypto/aes"
+	"intoyun-enterprise-demo-go/libs/define"
+	"intoyun-enterprise-demo-go/libs/proto"
 	"math/rand"
 
 	log "github.com/thinkboy/log4go"

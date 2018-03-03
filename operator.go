@@ -1,8 +1,8 @@
 package main
 
 import (
-	"itysrv/libs/define"
-	"itysrv/libs/proto"
+	"intoyun-enterprise-demo-go/libs/define"
+	"intoyun-enterprise-demo-go/libs/proto"
 )
 
 type Operator interface {

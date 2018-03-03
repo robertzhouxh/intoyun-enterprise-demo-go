@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	inet "itysrv/libs/network"
+	inet "intoyun-enterprise-demo-go/libs/network"
 )
 
 func initHttp() error {

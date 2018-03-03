@@ -3,7 +3,7 @@ package proto
 import (
 	"errors"
 	"fmt"
-	"itysrv/libs/define"
+	"intoyun-enterprise-demo-go/libs/define"
 
 	"github.com/gorilla/websocket"
 )

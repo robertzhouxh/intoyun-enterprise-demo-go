@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"itysrv/libs/proto"
+	"intoyun-enterprise-demo-go/libs/proto"
 
 	log "github.com/thinkboy/log4go"
 )

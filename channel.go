@@ -1,7 +1,7 @@
 package main
 
 import (
-	"itysrv/libs/proto"
+	"intoyun-enterprise-demo-go/libs/proto"
 )
 
 type Channel struct {
