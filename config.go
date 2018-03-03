@@ -15,7 +15,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&confFile, "c", "./srv.conf", " set itysrv config file path")
+	flag.StringVar(&confFile, "c", "./intoyun-enterprise-demo-go.conf", " set intoyun-enterprise-demo-go config file path")
 }
 
 type Config struct {
@@ -55,9 +55,9 @@ type Config struct {
 
 func NewConfig() *Config {
 	return &Config{
-		PidFile:       "/tmp/srv.pid",
+		PidFile:       "/tmp/intoyun-enterprise-demo-go.pid",
 		Dir:           "./",
-		Log:           "./srv-log.xml",
+		Log:           "./intoyun-enterprise-demo-go-log.xml",
 		MaxProc:       runtime.NumCPU(),
 		HTTPAddrs:     []string{"8080"},
 		WebsocketBind: []string{"0.0.0.0:8080"},

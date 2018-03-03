@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"itysrv/libs/define"
-	"itysrv/libs/proto"
+	"intoyun-enterprise-demo-go/libs/define"
+	"intoyun-enterprise-demo-go/libs/proto"
 	"net"
 	"net/http"
 	"time"

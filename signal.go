@@ -14,7 +14,7 @@ func InitSignal() {
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
 	for {
 		s := <-c
-		log.Info("itysrv get a signal %s", s.String())
+		log.Info("intoyun-enterprise-demo-go get a signal %s", s.String())
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 			return

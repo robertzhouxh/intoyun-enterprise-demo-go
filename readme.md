@@ -76,7 +76,7 @@
 ## 下载项目源码到 GOPATH 目录中的 src 中
 下载 intoyun-enterprise-demo-go 源码到上面创建的src目录中(如果不是用 git clone 下载来的， 请手动解压缩， 并将文件夹的名字改为 intoyun-enterprise-demo-go)
 
-## 修改配置文件(srv.conf) 替换 ${appid}, ${appsecret}
+## 修改配置文件(intoyun-enterprise-demo-go.conf) 替换 ${appid}, ${appsecret}
 
 1. http 监听端口
 
@@ -103,8 +103,8 @@
     - sasl.password ${appsecret}
 
 5. log 参数配置
-    - windows:  修改配置文件 srv.conf, 使用配置文件 intoyun-enterprise-demo-go-log-win.xml
-    - macos, linux 修改配置文件 srv.conf, 使用配置文件 intoyun-enterprise-demo-go-log.xml
+    - windows:  修改配置文件 intoyun-enterprise-demo-go.conf, 使用配置文件 intoyun-enterprise-demo-go-log-win.xml
+    - macos, linux 修改配置文件 intoyun-enterprise-demo-go.conf, 使用配置文件 intoyun-enterprise-demo-go-log.xml
 
 
 ## 运行服务(默认http:8081, websocket: 8082)
