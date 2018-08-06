@@ -12,6 +12,8 @@ const (
 	OP_HEARTBEAT_REPLY = int32(5)
 
 	// msg type
+
+	ONLINE_CODE    = int32(10)
 	WIFI_GPRS_META = int32(11)
 	LORA_GATE_META = int32(12)
 	LORA_NODE_META = int32(13)

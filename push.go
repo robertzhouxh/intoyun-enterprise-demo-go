@@ -68,6 +68,8 @@ func push(msg []byte) (err error) {
 		pushChs[rand.Int()%Conf.PushChan] <- &pushArg{Code: m.Code, Body: m.Body}
 	case define.TCP_WS_RX:
 		pushChs[rand.Int()%Conf.PushChan] <- &pushArg{Code: m.Code, Body: m.Body}
+	case define.ONLINE_CODE:
+		pushChs[rand.Int()%Conf.PushChan] <- &pushArg{Code: m.Code, Body: m.Body}
 	default:
 		log.Error("unknown operation:%s", m.Code)
 	}
