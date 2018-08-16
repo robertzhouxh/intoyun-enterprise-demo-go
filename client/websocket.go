@@ -100,6 +100,7 @@ func client(key string) {
 	proto2 := &proto.Proto{}
 	//rtdata := &RtData{}
 	rtdata := map[string]string{}
+	ondata := map[string]string{}
 
 	for {
 		if err = proto2.ReadWebsocket(conn); err != nil {
@@ -117,7 +118,23 @@ func client(key string) {
 			fmt.Println("收到心跳<===")
 		} else {
 			fmt.Printf("\n\n收到推送消息\n---------------------------------------\nCode=%d\nBody=%v\n---------------------------------------\n\n", proto2.Operation, []byte(proto2.Body))
-			if proto2.Operation == 21 {
+
+			if proto2.Operation == define.ONLINE_CODE {
+				err = json.Unmarshal(proto2.Body, &rtdata)
+				if err != nil {
+					fmt.Printf("json 解析失败: %v\n\n", err)
+				}
+				fmt.Printf("\n---------解析之后的上下线数据-------------\n")
+				ondps, _ := base64.StdEncoding.DecodeString(string(rtdata["data"]))
+				fmt.Printf("ONLINE: %v", ondps)
+				err = json.Unmarshal(ondps, &ondata)
+				if err != nil {
+					fmt.Printf("json 解析失败: %v\n\n", err)
+				}
+				fmt.Printf("设备上线 ===>: %v", ondata)
+			}
+
+			if proto2.Operation == define.WIFI_GPRS_RX {
 				err = json.Unmarshal(proto2.Body, &rtdata)
 				if err != nil {
 					fmt.Printf("json 解析失败: %v\n\n", err)
