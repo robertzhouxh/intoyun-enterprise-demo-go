@@ -4,7 +4,26 @@ import (
 	"fmt"
 	"runtime"
 	"time"
+	"sync"
 )
+
+
+type Statist struct {
+	cLock    sync.RWMutex        // protect the Devices
+	Devices map[string]*Device 
+	OnCnt int32
+	AllCnt int32
+}
+
+type Device struct {
+	Online string
+	OnAt    int64
+	Offline string
+	OffAt   int64
+	RxCnt   int64
+	Mins    int64
+	Average int64
+}
 
 var (
 	wsAddr   = "127.0.0.1:8082"
@@ -19,6 +38,8 @@ var (
 	prdMap = map[string]Product{} // 存储所有产品id对应的产品信息, prdId： prdInfo
 )
 
+var	statistics *Statist
+
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
@@ -26,6 +47,8 @@ func main() {
 		fmt.Printf("initHttp Err===>: %v\n", err)
 		return
 	}
+	statistics = new(Statist)
+	statistics.Devices = make(map[string]*Device, 100)
 
 	// 统计qps
 	go result()

@@ -36,7 +36,7 @@ func result() {
 		diffUp      int64
 		nowCount    int64
 		nowCountUp  int64
-		timer       = int64(30)
+		timer       = int64(80)
 	)
 
 	for {
@@ -48,6 +48,18 @@ func result() {
 		lastTimesUp = nowCountUp
 		fmt.Println(fmt.Sprintf("%s down:%d down/s:%d", time.Now().Format("2006-01-02 15:04:05"), nowCount, diff/timer))
 		fmt.Println(fmt.Sprintf("%s up:%d up/s:%d", time.Now().Format("2006-01-02 15:04:05"), nowCountUp, diffUp/timer))
+
+		t := time.Now().Format("2006-01-02 15:04:05")
+		fmt.Printf("\n\n---------------------------------------------------------- 统计信息-----------------------------------------------------------------\n\n")
+		for id, dev := range statistics.Devices {
+			//fmt.Print("统计Devid: %s Now: %d Dev'sOnAt: %d", time.Now().Unix(), dev.OnAt)
+			mins := (time.Now().Unix() - dev.OnAt) / 60
+			if mins == 0 {
+				mins++
+			}
+			fmt.Printf("\n设备Id:[%s]-上线时间[%s]-当前时间[%s]-总分钟数[%d]-上传次数[%d]-平均次数[%d]\n", id, dev.Online, t, mins, dev.RxCnt, dev.RxCnt/mins)
+		}
+		fmt.Printf("\n\n--------------------------------------------------------------------------------------------------------------------------------------\n\n")
 		time.Sleep(time.Duration(timer) * time.Second)
 	}
 }
@@ -100,7 +112,7 @@ func client(key string) {
 	proto2 := &proto.Proto{}
 	//rtdata := &RtData{}
 	rtdata := map[string]string{}
-	ondata := map[string]string{}
+	ondata := map[string]interface{}{}
 
 	for {
 		if err = proto2.ReadWebsocket(conn); err != nil {
@@ -124,23 +136,49 @@ func client(key string) {
 				if err != nil {
 					fmt.Printf("json 解析失败: %v\n\n", err)
 				}
-				fmt.Printf("\n---------解析之后的上下线数据-------------\n")
+				//fmt.Printf("\n---------解析之后的上下线数据-------------\n")
 				ondps, _ := base64.StdEncoding.DecodeString(string(rtdata["data"]))
-				fmt.Printf("ONLINE: %v", ondps)
+				//fmt.Printf("ONLINE: %v", ondps)
 				err = json.Unmarshal(ondps, &ondata)
 				if err != nil {
 					fmt.Printf("json 解析失败: %v\n\n", err)
 				}
-				fmt.Printf("设备上线 ===>: %v", ondata)
+
+				dev := new(Device)
+				if ondata["online"] == true {
+					fmt.Printf("\n\n%s 设备上线 ===> %v\n\n", ondata["devId"], ondata["online"])
+					dev.Online = time.Now().Format("2006-01-02 15:04:05")
+					dev.OnAt = time.Now().Unix()
+					dev.RxCnt = 1
+					dev.Average = 0
+				} else {
+					fmt.Printf("\n\n%s 设备离线 ===> %v\n\n", ondata["devId"], ondata["online"])
+					dev.Offline = time.Now().Format("2006-01-02 15:04:05")
+					dev.OffAt = time.Now().Unix()
+					dev.RxCnt = 0
+					dev.RxCnt = 0
+					dev.Average = 0
+				}
+				devId, _ := ondata["devId"].(string)
+
+				statistics.cLock.Lock()
+				statistics.Devices[devId] = dev
+				statistics.cLock.Unlock()
+
 			}
 
-			if proto2.Operation == define.WIFI_GPRS_RX {
+			if proto2.Operation == define.WIFI_GPRS_RX || proto2.Operation == define.LORA_NODE_RX {
 				err = json.Unmarshal(proto2.Body, &rtdata)
 				if err != nil {
 					fmt.Printf("json 解析失败: %v\n\n", err)
 				}
 
 				//rxData type: {"devId": <DeviceId>, "prdId": <ProductId>, "stoId": <StoreId>, "data": <mqtt_payload_after_base64_encode>}
+
+				statistics.cLock.Lock()
+				statistics.Devices[string(rtdata["data"])].RxCnt++
+				statistics.cLock.Unlock()
+
 				rtdps, _ := base64.StdEncoding.DecodeString(string(rtdata["data"]))
 				//fmt.Printf("实时数据raw： %v\n\n", rtdps)
 				dps := parse(rtdps)
@@ -148,7 +186,7 @@ func client(key string) {
 				prdId := rtdata["prdId"]
 				prdDps := prdMap[prdId].Datapoints
 
-				fmt.Printf("\n---------解析之后的实时数据-------------\n")
+				//fmt.Printf("\n---------解析之后的实时数据-------------\n")
 				for _, item := range dps {
 					dpItem := GetDpItem(prdDps, item.DpId)
 					if item.DpType == NUMB {
