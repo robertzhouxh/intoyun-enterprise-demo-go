@@ -176,7 +176,7 @@ func client(key string) {
 				//rxData type: {"devId": <DeviceId>, "prdId": <ProductId>, "stoId": <StoreId>, "data": <mqtt_payload_after_base64_encode>}
 
 				statistics.cLock.Lock()
-				statistics.Devices[string(rtdata["data"])].RxCnt++
+				statistics.Devices[string(rtdata["devId"])].RxCnt++
 				statistics.cLock.Unlock()
 
 				rtdps, _ := base64.StdEncoding.DecodeString(string(rtdata["data"]))
