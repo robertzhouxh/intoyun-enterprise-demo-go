@@ -178,12 +178,20 @@ func client(key string) {
 
 				//rxData type: {"devId": <DeviceId>, "prdId": <ProductId>, "stoId": <StoreId>, "data": <mqtt_payload_after_base64_encode>}
 				fmt.Printf("解析结果: %v\n\n", rtdata)
+
 				statistics.cLock.Lock()
 				did, _ := rtdata["devId"].(string)
 				if statistics.Devices[did] != nil {
 					statistics.Devices[did].RxCnt++
 				} else {
-					fmt.Printf("\n!!!!!!!!!!!! 设备[%s] 已经上线， 请重启设备以完成设备在本平台注册 !!!!!!!!!!!\n", did)
+					fmt.Printf("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LORA 设备[%s] 初始化开始 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", did)
+					dev := new(Device)
+					dev.Online = time.Now().Format("2006-01-02 15:04:05")
+					dev.OnAt = time.Now().Unix()
+					dev.RxCnt = 1
+					dev.Average = 0
+					statistics.Devices[did] = dev
+					fmt.Printf("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LORA 设备[%s] 初始化结束 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", did)
 				}
 				statistics.cLock.Unlock()
 
