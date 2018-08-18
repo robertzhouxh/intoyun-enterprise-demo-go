@@ -183,7 +183,9 @@ func client(key string) {
 				}
 
 				//rxData type: {"devId": <DeviceId>, "prdId": <ProductId>, "stoId": <StoreId>, "data": <mqtt_payload_after_base64_encode>}
-				fmt.Printf("解析结果: %v\n\n", rtdata)
+				if debug {
+					fmt.Printf("解析结果: %v\n\n", rtdata)
+				}
 
 				statistics.cLock.Lock()
 				did, _ := rtdata["devId"].(string)
