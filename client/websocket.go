@@ -103,7 +103,9 @@ func client(key string) {
 				return
 			}
 			atomic.AddInt64(&countUp, 1)
-			fmt.Println("发送心跳===>")
+			if debug == true {
+				fmt.Println("发送心跳===>")
+			}
 			time.Sleep(time.Second * time.Duration(freq))
 		}
 	}()
@@ -127,9 +129,13 @@ func client(key string) {
 			if err = conn.SetReadDeadline(time.Now().Add(60 * time.Second)); err != nil {
 				return
 			}
-			fmt.Println("收到心跳<===")
+			if debug == true {
+				fmt.Println("收到心跳<===")
+			}
 		} else {
-			fmt.Printf("\n\n收到推送消息\n---------------------------------------\nCode=%d\nBody=%v\n---------------------------------------\n\n", proto2.Operation, []byte(proto2.Body))
+			if debug == true {
+				fmt.Printf("\n\n收到推送消息\n---------------------------------------\nCode=%d\nBody=%v\n---------------------------------------\n\n", proto2.Operation, []byte(proto2.Body))
+			}
 
 			if proto2.Operation == define.ONLINE_CODE {
 				err = json.Unmarshal(proto2.Body, &rtdata)
@@ -195,33 +201,35 @@ func client(key string) {
 				}
 				statistics.cLock.Unlock()
 
-				//rtdps, _ := base64.StdEncoding.DecodeString(string(rtdata["data"]))
-				rtd, _ := rtdata["data"].(string)
-				rtdps, _ := base64.StdEncoding.DecodeString(rtd)
+				if debug == true {
+					//rtdps, _ := base64.StdEncoding.DecodeString(string(rtdata["data"]))
+					rtd, _ := rtdata["data"].(string)
+					rtdps, _ := base64.StdEncoding.DecodeString(rtd)
 
-				//fmt.Printf("实时数据raw： %v\n\n", rtdps)
-				dps := parse(rtdps)
-				// app/web 客户端展示数据点
-				//prdId := rtdata["prdId"]
-				prdId, _ := rtdata["prdId"].(string)
-				prdDps := prdMap[prdId].Datapoints
+					//fmt.Printf("实时数据raw： %v\n\n", rtdps)
+					dps := parse(rtdps)
+					// app/web 客户端展示数据点
+					//prdId := rtdata["prdId"]
+					prdId, _ := rtdata["prdId"].(string)
+					prdDps := prdMap[prdId].Datapoints
 
-				//fmt.Printf("\n---------解析之后的实时数据-------------\n")
-				for _, item := range dps {
-					dpItem := GetDpItem(prdDps, item.DpId)
-					if item.DpType == NUMB {
-						precision, _ := dpItem.Resolution.Int64()
-						dpVal := ConvNumb(item.DpVal, dpItem.Min, int(precision))
-						fmt.Printf("\n数据点Id: %d\n数据点类型%d\n数据点值:%g\n", item.DpId, item.DpType, dpVal)
-					} else if item.DpType == BOOL {
-						dpVal := "false"
-						if bytes2int(item.DpVal) == uint64(1) {
-							dpVal = "true"
+					fmt.Printf("\n---------解析之后的实时数据-------------\n")
+					for _, item := range dps {
+						dpItem := GetDpItem(prdDps, item.DpId)
+						if item.DpType == NUMB {
+							precision, _ := dpItem.Resolution.Int64()
+							dpVal := ConvNumb(item.DpVal, dpItem.Min, int(precision))
+							fmt.Printf("\n数据点Id: %d\n数据点类型%d\n数据点值:%g\n", item.DpId, item.DpType, dpVal)
+						} else if item.DpType == BOOL {
+							dpVal := "false"
+							if bytes2int(item.DpVal) == uint64(1) {
+								dpVal = "true"
+							}
+							fmt.Printf("\n数据点Id: %d\n数据点类型%d\n数据点值:%s\n", item.DpId, item.DpType, dpVal)
 						}
-						fmt.Printf("\n数据点Id: %d\n数据点类型%d\n数据点值:%s\n", item.DpId, item.DpType, dpVal)
 					}
+					fmt.Printf("\n---------------------------------------\n")
 				}
-				fmt.Printf("\n---------------------------------------\n")
 			}
 		}
 	}

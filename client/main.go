@@ -3,20 +3,19 @@ package main
 import (
 	"fmt"
 	"runtime"
-	"time"
 	"sync"
+	"time"
 )
 
-
 type Statist struct {
-	cLock    sync.RWMutex        // protect the Devices
-	Devices map[string]*Device 
-	OnCnt int32
-	AllCnt int32
+	cLock   sync.RWMutex // protect the Devices
+	Devices map[string]*Device
+	OnCnt   int32
+	AllCnt  int32
 }
 
 type Device struct {
-	Online string
+	Online  string
 	OnAt    int64
 	Offline string
 	OffAt   int64
@@ -34,11 +33,12 @@ var (
 	interval = 10 // 每10毫秒创建一个客户端连接
 	freq     = 30 // 心跳间隔 30 秒
 
+	debug  = true
 	prds   = []Product{}
 	prdMap = map[string]Product{} // 存储所有产品id对应的产品信息, prdId： prdInfo
 )
 
-var	statistics *Statist
+var statistics *Statist
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
