@@ -111,7 +111,7 @@ func client(key string) {
 	// reader
 	proto2 := &proto.Proto{}
 	//rtdata := &RtData{}
-	rtdata := map[string]string{}
+	rtdata := map[string]interface{}{}
 	ondata := map[string]interface{}{}
 
 	for {
@@ -137,7 +137,10 @@ func client(key string) {
 					fmt.Printf("json 解析失败: %v\n\n", err)
 				}
 				//fmt.Printf("\n---------解析之后的上下线数据-------------\n")
-				ondps, _ := base64.StdEncoding.DecodeString(string(rtdata["data"]))
+				rtd, _ := rtdata["data"].(string)
+				//ondps, _ := base64.StdEncoding.DecodeString(string(rtdata["data"]))
+				ondps, _ := base64.StdEncoding.DecodeString(rtd)
+
 				//fmt.Printf("ONLINE: %v", ondps)
 				err = json.Unmarshal(ondps, &ondata)
 				if err != nil {
@@ -174,16 +177,25 @@ func client(key string) {
 				}
 
 				//rxData type: {"devId": <DeviceId>, "prdId": <ProductId>, "stoId": <StoreId>, "data": <mqtt_payload_after_base64_encode>}
-
+				fmt.Printf("解析结果: %v\n\n", rtdata)
 				statistics.cLock.Lock()
-				statistics.Devices[string(rtdata["devId"])].RxCnt++
+				did, _ := rtdata["devId"].(string)
+				if statistics.Devices[did] != nil {
+					statistics.Devices[did].RxCnt++
+				} else {
+					fmt.Printf("\n!!!!!!!!!!!! 设备[%s] 已经上线， 请重启设备以完成设备在本平台注册 !!!!!!!!!!!\n", did)
+				}
 				statistics.cLock.Unlock()
 
-				rtdps, _ := base64.StdEncoding.DecodeString(string(rtdata["data"]))
+				//rtdps, _ := base64.StdEncoding.DecodeString(string(rtdata["data"]))
+				rtd, _ := rtdata["data"].(string)
+				rtdps, _ := base64.StdEncoding.DecodeString(rtd)
+
 				//fmt.Printf("实时数据raw： %v\n\n", rtdps)
 				dps := parse(rtdps)
 				// app/web 客户端展示数据点
-				prdId := rtdata["prdId"]
+				//prdId := rtdata["prdId"]
+				prdId, _ := rtdata["prdId"].(string)
 				prdDps := prdMap[prdId].Datapoints
 
 				//fmt.Printf("\n---------解析之后的实时数据-------------\n")
