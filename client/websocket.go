@@ -50,14 +50,14 @@ func result() {
 		fmt.Println(fmt.Sprintf("%s up:%d up/s:%d", time.Now().Format("2006-01-02 15:04:05"), nowCountUp, diffUp/timer))
 
 		t := time.Now().Format("2006-01-02 15:04:05")
-		fmt.Printf("\n\n---------------------------------------------------------- 统计信息-----------------------------------------------------------------\n\n")
+		fmt.Printf("\n\n----------------------------------------统计信息: 在线设备总数[%d]-----------------------------------------------------------------\n\n", statistics.OnCnt)
 		for id, dev := range statistics.Devices {
 			//fmt.Print("统计Devid: %s Now: %d Dev'sOnAt: %d", time.Now().Unix(), dev.OnAt)
 			mins := (time.Now().Unix() - dev.OnAt) / 60
 			if mins == 0 {
 				mins++
 			}
-			fmt.Printf("\n设备Id:[%s]-上线时间[%s]-当前时间[%s]-总分钟数[%d]-上传次数[%d]-平均次数[%d]\n", id, dev.Online, t, mins, dev.RxCnt, dev.RxCnt/mins)
+			fmt.Printf("\n设备Id:[%s]-上线时间[%s]-当前时间[%s]-总分钟数[%d]-上传次数[%d]-平均次数[%f]\n", id, dev.Online, t, mins, dev.RxCnt, float64(dev.RxCnt)/float64(mins))
 		}
 		fmt.Printf("\n\n--------------------------------------------------------------------------------------------------------------------------------------\n\n")
 		time.Sleep(time.Duration(timer) * time.Second)
@@ -160,6 +160,7 @@ func client(key string) {
 					dev.OnAt = time.Now().Unix()
 					dev.RxCnt = 1
 					dev.Average = 0
+					statistics.OnCnt++
 				} else {
 					fmt.Printf("\n\n%s 设备离线 ===> %v\n\n", ondata["devId"], ondata["online"])
 					dev.Offline = time.Now().Format("2006-01-02 15:04:05")
@@ -167,6 +168,7 @@ func client(key string) {
 					dev.RxCnt = 0
 					dev.RxCnt = 0
 					dev.Average = 0
+					statistics.OnCnt--
 				}
 				devId, _ := ondata["devId"].(string)
 
@@ -192,13 +194,14 @@ func client(key string) {
 				if statistics.Devices[did] != nil {
 					statistics.Devices[did].RxCnt++
 				} else {
-					fmt.Printf("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LORA 设备[%s] 初始化开始 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", did)
+					fmt.Printf("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LORA 设备上线[%s] 初始化开始 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", did)
 					dev := new(Device)
 					dev.Online = time.Now().Format("2006-01-02 15:04:05")
 					dev.OnAt = time.Now().Unix()
 					dev.RxCnt = 1
 					dev.Average = 0
 					statistics.Devices[did] = dev
+					statistics.OnCnt++
 					fmt.Printf("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LORA 设备[%s] 初始化结束 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", did)
 				}
 				statistics.cLock.Unlock()
